@@ -35,59 +35,69 @@ class Tristan200(BaseFixture):
 
     def __init__(self, address=None):
         super().__init__(address)
-        self.elapsed = 0
-
         self._mapping = Tristan200.Mapping()
+
+        self._dim_factor = 1.0
+        self._elapsed = 0
+        self._group_position = 0
         self._previous_color = 0
-        self._previous_gobo1 = 0
+        self._symmetry = 0
         self._wheels_blackout_timestamp = 0
 
     def map_to_channels(self, mood: Mood, group_position: float) -> list[int]:
-        self.elapsed += mood.animation / 10.0
-        sym = (group_position * 2.0) - 1.0
+        self._elapsed += 0.1
+        self._group_position = group_position
+        self._symmetry = (group_position * 2.0) - 1.0
 
         self._mapping = Tristan200.Mapping()
-        self._mapping.color = self._color_wheel(mood)
+        self._color_wheel(mood)
+        self._beam(mood)
+        self._blinking(mood)
 
+        self._mapping.dimmer = map_to_int(mood.master_dimmer * mood.recallable_dimmer * self._dim_factor * 0.5)
+        self._poll_for_wheels_blackout()
+        return list(vars(self._mapping).values())
+
+    def _beam(self, mood: Mood):
         if mood.texture > .66:
             self._mapping.focus = 255
             self._mapping.gobo2 = 11
-            dim_factor = 1.0
+            self._dim_factor = 1.0
 
         elif mood.texture > .33:
             self._mapping.focus = 255
             self._mapping.gobo1 = 28
             self._mapping.prism = 26
             self._mapping.frost = 34
-            self._mapping.prism_rotation = 179 + int(group_position * 27)
-            dim_factor = 0.6
+            self._mapping.prism_rotation = 179 + int(self._group_position * 27)
+            self._dim_factor = 0.6
 
         else:
             self._mapping.prism = 26
             self._mapping.frost = 144
-            dim_factor = 0.4
+            self._dim_factor = 0.4
 
-        if mood.blinking > .7:
-            self._mapping.shutter = 121
-
-        elif mood.blinking < .3:
-            dim_factor *= p_cos(mood.beat_counter * 6.28)
-
-        pan = p_cos(mood.beat_counter + 1.57 * sym) * .3
+        pan = p_cos(self._elapsed + 1.57 * self._symmetry) * .3
         if .6 > mood.animation > .3:
             pan = 0.18  # roughly 45, centered
 
         self._mapping.pan = map_to_int(pan)
         self._mapping.tilt = 40
-        self._mapping.dimmer = map_to_int(mood.master_dimmer * mood.recallable_dimmer * dim_factor * 0.5)
 
-        self._poll_for_wheels_blackout()
-        return list(vars(self._mapping).values())
+    def _blinking(self, mood: Mood):
+        """
+        Call after color wheel
+        """
+        if mood.blinking > 0.80:
+            self._mapping.color = 64  # open
 
-    def _color_wheel(self, mood:Mood) -> int:
-        if mood.blinking > 0.75:
-            return 64  # open
+        if mood.blinking > 0.55:
+            self._mapping.shutter = map_to_int((mood.blinking - 0.55) / 0.45, 95, 125)
 
+    def _color_wheel(self, mood:Mood):
+        """
+        Call before blinking
+        """
         mapping = [
             [0.0, .03, 66],  # red
             [.03, .05, 67],  # red/orange
@@ -109,28 +119,22 @@ class Tristan200(BaseFixture):
 
         for min_, max_, value in mapping:
             if min_ <= mood.palette <= max_:
-                distance = abs(self._previous_color - value)
-                if distance > 0:
-                    self._previous_color = value
-                    if distance > 1:
-                        self._start_wheels_blackout()
+                self._mapping.color = value
+                return
 
-                return value
-
-        return 128  # fast wheel rotation to debug
-
-    def _start_wheels_blackout(self):
-        """
-        Blacks out for a short period of time while wheels are turning
-        Call whenever you change a parameter associated with a wheel
-        """
-        self._wheels_blackout_timestamp = time.time()
+        self._mapping.color = 128  # fast wheel rotation to warn operator something's wrong
 
     def _poll_for_wheels_blackout(self):
         """
         Blacks out for a short period of time while wheels are turning
         Call right before returning mapped channels
         """
+        distance = abs(self._previous_color - self._mapping.color)
+        if distance > 0:
+            self._previous_color = self._mapping.color
+            if distance > 1:
+                self._wheels_blackout_timestamp = time.time()
+
         if time.time() - self._wheels_blackout_timestamp < 0.2:
             self._mapping.dimmer = 0
 
