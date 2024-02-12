@@ -1,10 +1,8 @@
 import logging
 import time
-
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
-from oscartnetdaemon.core.mood import Mood
 
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
 
@@ -39,37 +37,35 @@ class Tristan200(BaseFixture):
 
         self._dim_factor = 1.0
         self._elapsed = 0
-        self._group_position = 0
         self._previous_color = 0
         self._symmetry = 0
         self._wheels_blackout_timestamp = 0
 
-    def map_to_channels(self, mood: Mood, group_position: float) -> list[int]:
+    def map_to_channels(self) -> list[int]:
         self._elapsed += 0.1
-        self._group_position = group_position
-        self._symmetry = (group_position * 2.0) - 1.0
+        self._symmetry = (self.group_position * 2.0) - 1.0
 
         self._mapping = Tristan200.Mapping()
-        self._color_wheel(mood)
-        self._beam(mood)
-        self._blinking(mood)
+        self._color_wheel()
+        self._beam()
+        self._blinking()
 
-        self._mapping.dimmer = map_to_int(mood.master_dimmer * mood.recallable_dimmer * self._dim_factor * 0.5)
+        self._mapping.dimmer = map_to_int(self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * 0.5)
         self._poll_for_wheels_blackout()
         return list(vars(self._mapping).values())
 
-    def _beam(self, mood: Mood):
-        if mood.texture > .66:
+    def _beam(self):
+        if self.mood.texture > .66:
             self._mapping.focus = 255
             self._mapping.gobo2 = 11
             self._dim_factor = 1.0
 
-        elif mood.texture > .33:
+        elif self.mood.texture > .33:
             self._mapping.focus = 255
             self._mapping.gobo1 = 28
             self._mapping.prism = 26
             self._mapping.frost = 34
-            self._mapping.prism_rotation = 179 + int(self._group_position * 27)
+            self._mapping.prism_rotation = 179 + int(self.group_position * 27)
             self._dim_factor = 0.6
 
         else:
@@ -78,23 +74,23 @@ class Tristan200(BaseFixture):
             self._dim_factor = 0.4
 
         pan = p_cos(self._elapsed + 1.57 * self._symmetry) * .3
-        if .6 > mood.animation > .3:
+        if .6 > self.mood.animation > .3:
             pan = 0.18  # roughly 45, centered
 
         self._mapping.pan = map_to_int(pan)
         self._mapping.tilt = 40
 
-    def _blinking(self, mood: Mood):
+    def _blinking(self):
         """
         Call after color wheel
         """
-        if mood.blinking > 0.80:
+        if self.mood.blinking > 0.80:
             self._mapping.color = 64  # open
 
-        if mood.blinking > 0.55:
-            self._mapping.shutter = map_to_int((mood.blinking - 0.55) / 0.45, 95, 125)
+        if self.mood.blinking > 0.55:
+            self._mapping.shutter = map_to_int((self.mood.blinking - 0.55) / 0.45, 95, 125)
 
-    def _color_wheel(self, mood:Mood):
+    def _color_wheel(self):
         """
         Call before blinking
         """
@@ -118,7 +114,7 @@ class Tristan200(BaseFixture):
         ]
 
         for min_, max_, value in mapping:
-            if min_ <= mood.palette <= max_:
+            if min_ <= self.mood.palette <= max_:
                 self._mapping.color = value
                 return
 
