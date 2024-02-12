@@ -32,7 +32,10 @@ class OctostripBar(BaseFixture):
         value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2)
 
         # Animation
-        value *= self.read_pattern(patterns.octostrip[self.mood.pattern])
+        value *= self.read_pattern(
+            table=patterns.octostrip[self.mood.pattern],
+            time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale]
+        )
 
         strobe = 0
         if self.mood.blinking > 0.5:

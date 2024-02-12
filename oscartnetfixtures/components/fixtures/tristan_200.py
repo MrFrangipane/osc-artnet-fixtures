@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
 
+from oscartnetfixtures.components import patterns
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
 
 _logger = logging.getLogger(__name__)
@@ -48,6 +49,7 @@ class Tristan200(BaseFixture):
         self._mapping = self.Mapping()
         self._color_wheel()
         self._beam()
+        self._animation()
         self._blinking()
 
         self._mapping.dimmer = map_to_int(self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * 0.5)
@@ -73,12 +75,23 @@ class Tristan200(BaseFixture):
             self._mapping.frost = 144
             self._dim_factor = 0.4
 
-        pan = p_cos(self._elapsed + 1.57 * self._symmetry) * .3
-        if .6 > self.mood.animation > .3:
-            pan = 0.18  # roughly 45, centered
+    def _animation(self):
+        time_scale = [1.0, 1.0, 1.0, 2.0, 2.0][self.mood.bpm_scale]
 
-        self._mapping.pan = map_to_int(pan)
-        self._mapping.tilt = 40
+        pan, dim = self.read_pattern(
+            table=patterns.tristan200_pan[self.mood.pattern],
+            time_scale=time_scale
+        )
+        self._dim_factor *= dim
+
+        tilt, dim = self.read_pattern(
+            table=patterns.tristan200_tilt[self.mood.pattern],
+            time_scale=time_scale
+        )
+        self._dim_factor *= dim
+
+        self._mapping.pan = map_to_int(pan, 87,172)
+        self._mapping.tilt = map_to_int(tilt, 0,72)
 
     def _blinking(self):
         """
@@ -133,4 +146,3 @@ class Tristan200(BaseFixture):
 
         if time.time() - self._wheels_blackout_timestamp < 0.2:
             self._mapping.dimmer = 0
-
