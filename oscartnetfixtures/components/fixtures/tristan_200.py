@@ -45,7 +45,7 @@ class Tristan200(BaseFixture):
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
-        self._mapping = Tristan200.Mapping()
+        self._mapping = self.Mapping()
         self._color_wheel()
         self._beam()
         self._blinking()

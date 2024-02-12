@@ -9,7 +9,7 @@ from oscartnetfixtures.python_extensions.math import map_to_int
 
 
 class OctostripBar(BaseFixture):
-    desaturate_threshold = 0.75
+    desaturate_threshold = 0.5
 
     @dataclass
     class Mapping:
@@ -21,21 +21,29 @@ class OctostripBar(BaseFixture):
         chase: int = 0  # sound active 241-255
 
     def map_to_channels(self) -> list[int]:
-        # color
-        offset = 0  # ((group_position * 2) - 1) * mood.animation * 0.5
-        hue = (self.mood.palette + offset) % 1.0
-        saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / self.desaturate_threshold \
-            if self.mood.blinking > self.desaturate_threshold else 1.0
+        # Color
+        hue = self.mood.palette
+
+        if self.mood.blinking > self.desaturate_threshold:
+            saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
+        else:
+            saturation = 1.0
+
         value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2)
 
-        # animation
+        # Animation
         value *= self.read_pattern(patterns.octostrip[self.mood.pattern])
 
-        # map
+        strobe = 0
+        if self.mood.blinking > 0.5:
+            strobe = (self.mood.blinking - 0.5) * 2.0
+
+        # Map
         red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
-        mapping = OctostripBar.Mapping()
+        mapping = self.Mapping()
         mapping.red = map_to_int(red)
         mapping.green = map_to_int(green)
         mapping.blue = map_to_int(blue)
+        mapping.strobe = map_to_int(strobe)
 
         return list(vars(mapping).values())

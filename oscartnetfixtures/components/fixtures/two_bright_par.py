@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
 
+from oscartnetfixtures.components import patterns
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
 
 
@@ -20,21 +21,24 @@ class TwoBrightPar(BaseFixture):
         uv: int = 0
 
     def map_to_channels(self) -> list[int]:
-        # color
-        offset = 0  # ((group_position * 2) - 1) * mood.animation * 0.5
-        hue = (self.mood.palette + offset) % 1.0
-        saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / self.desaturate_threshold \
-            if self.mood.blinking > self.desaturate_threshold else 1.0
-        value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2)
+        # Color
+        hue = self.mood.palette
+
+        if self.mood.blinking > self.desaturate_threshold:
+            saturation = 1.2 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
+        else:
+            saturation = 1.0
+
+        value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2) * saturation
+
+        # Animation
+        # value *= self.read_pattern(patterns.octostrip[self.mood.pattern])
+
+        # Map
         red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
-
-        # animation
-        pass
-
-        # map
-        mapping = TwoBrightPar.Mapping()
-        mapping.red = map_to_int(red * self.mood.blinking * .5)
-        mapping.green = map_to_int(green * self.mood.blinking * .5)
-        mapping.blue = map_to_int(blue * self.mood.blinking * .5)
+        mapping = self.Mapping()
+        mapping.red = map_to_int(red)
+        mapping.green = map_to_int(green)
+        mapping.blue = map_to_int(blue)
 
         return list(vars(mapping).values())
