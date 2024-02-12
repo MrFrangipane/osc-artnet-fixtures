@@ -1,9 +1,11 @@
 import importlib
 import logging
+import sys
 from typing import Type
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
 
+from oscartnetfixtures.components import patterns
 from oscartnetfixtures.components.fixtures import octostrip_bar
 from oscartnetfixtures.components.fixtures import tristan_200
 from oscartnetfixtures.components.fixtures import two_bright_par
@@ -15,7 +17,8 @@ class OSCArtnetFixturesAPI:
 
     @staticmethod
     def reload_definitions():
-        _logger.info("Reloading fixtures definitions")
+        _logger.info("Reloading fixtures and patterns definitions")
+        importlib.reload(patterns)
         importlib.reload(octostrip_bar)
         importlib.reload(tristan_200)
         importlib.reload(two_bright_par)
