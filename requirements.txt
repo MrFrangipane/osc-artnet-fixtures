@@ -1,1 +1,1 @@
-oscartnetdaemon @ git+https://github.com/MrFrangipane/osc-artnet-daemon@main
+
