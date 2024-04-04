@@ -20,7 +20,7 @@ class TwoBrightPar(BaseFixture):
         amber: int = 0
         uv: int = 0
 
-    def map_to_channels(self) -> list[int]:
+    def map_to_channels(self, group_dimmer: float) -> list[int]:
         # Color
         hue = self.mood.palette
 
@@ -30,6 +30,7 @@ class TwoBrightPar(BaseFixture):
             saturation = 1.0
 
         value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2) * saturation
+        value *= group_dimmer
 
         # Animation
         # value *= self.read_pattern(patterns.octostrip[self.mood.pattern])

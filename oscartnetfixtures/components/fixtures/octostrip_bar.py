@@ -20,7 +20,7 @@ class OctostripBar(BaseFixture):
         strobe: int = 0  # 1-20 Hz
         chase: int = 0  # sound active 241-255
 
-    def map_to_channels(self) -> list[int]:
+    def map_to_channels(self, group_dimmer: float) -> list[int]:
         # Color
         hue = self.mood.palette
 
@@ -36,6 +36,7 @@ class OctostripBar(BaseFixture):
             table=patterns.octostrip[self.mood.pattern],
             time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale]
         )
+        value *= group_dimmer
 
         strobe = 0
         if self.mood.blinking > 0.5:

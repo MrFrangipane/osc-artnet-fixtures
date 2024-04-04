@@ -42,7 +42,7 @@ class Tristan200(BaseFixture):
         self._symmetry = 0
         self._wheels_blackout_timestamp = 0
 
-    def map_to_channels(self) -> list[int]:
+    def map_to_channels(self, group_dimmer: float) -> list[int]:
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
@@ -52,7 +52,9 @@ class Tristan200(BaseFixture):
         self._animation()
         self._blinking()
 
-        self._mapping.dimmer = map_to_int(self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * 0.5)
+        self._mapping.dimmer = map_to_int(
+            self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * group_dimmer
+        )
         self._poll_for_wheels_blackout()
         return list(vars(self._mapping).values())
 
