@@ -6,6 +6,8 @@ from oscartnetdaemon.core.fixture.base import BaseFixture
 
 from oscartnetfixtures.components import patterns
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
+from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
+from oscartnetdaemon.core.osc.two_bright_par import HSL  # fixme ?
 
 
 class TwoBrightPar(BaseFixture):
@@ -19,6 +21,16 @@ class TwoBrightPar(BaseFixture):
         white: int = 0
         amber: int = 0
         uv: int = 0
+
+    def map_from_hsl(self, hsl: HSL):
+        r, g, b, w = hsl_to_rgbw(hsl.h, hsl.s, hsl.l)
+        mapping = self.Mapping()
+        mapping.red = int(r * 255)
+        mapping.green = int(g * 255)
+        mapping.blue = int(b * 255)
+        mapping.white = int(w * 255)
+
+        return list(vars(mapping).values())
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
         # Color

@@ -39,7 +39,7 @@ class OctostripBar(BaseFixture):
         value *= group_dimmer
 
         strobe = 0
-        if self.mood.blinking > 0.5:
+        if self.mood.blinking > 0.7:
             strobe = (self.mood.blinking - 0.5) * 2.0
 
         # Map
@@ -48,6 +48,7 @@ class OctostripBar(BaseFixture):
         mapping.red = map_to_int(red)
         mapping.green = map_to_int(green)
         mapping.blue = map_to_int(blue)
-        mapping.strobe = map_to_int(strobe)
+        if strobe:
+            mapping.strobe = map_to_int(strobe, 128, 255)
 
         return list(vars(mapping).values())
