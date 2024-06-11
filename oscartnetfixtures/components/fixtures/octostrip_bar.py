@@ -32,7 +32,7 @@ class OctostripBar(BaseFixture):
             hue += 0.33
 
         elif self.mood.palette == 4:
-            hue += self.group_position
+            hue += self.group_position * 0.5 - 0.25
 
         #
         # Saturation
