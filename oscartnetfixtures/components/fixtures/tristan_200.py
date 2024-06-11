@@ -128,8 +128,13 @@ class Tristan200(BaseFixture):
             [.98, 1.0, 66]   # red
         ]
 
+        hue = self.mood.hue
+        if self.mood.palette == 3:
+            hue += 0.5
+            hue = hue % 1.0
+
         for min_, max_, value in mapping:
-            if min_ <= self.mood.palette <= max_:
+            if min_ <= hue <= max_:
                 self._mapping.color = value
                 return
 

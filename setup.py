@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 NAME = 'oscartnetfixtures'
-VERSION = '0.0.1'
+VERSION = '0.1.0'
 DESCRIPTION = 'Fixture definitions and algorithms'
 AUTHOR = 'Frangitron'
 AUTHOR_EMAIL = 'contact@frangitron.com'

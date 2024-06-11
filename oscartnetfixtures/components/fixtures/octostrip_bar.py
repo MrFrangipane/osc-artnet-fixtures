@@ -21,9 +21,21 @@ class OctostripBar(BaseFixture):
         chase: int = 0  # sound active 241-255
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
-        # Color
-        hue = self.mood.palette
+        #
+        # hue
+        hue = self.mood.hue
 
+        if self.mood.palette == 1 and self.group_place % 2:
+            hue += 0.5
+
+        if self.mood.palette == 2 and self.group_place not in [0, self.group_size - 1]:
+            hue += 0.33
+
+        elif self.mood.palette == 4:
+            hue += self.group_position
+
+        #
+        # Saturation
         if self.mood.blinking > self.desaturate_threshold:
             saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
         else:
@@ -31,6 +43,7 @@ class OctostripBar(BaseFixture):
 
         value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2)
 
+        #
         # Animation
         value *= self.read_pattern(
             table=patterns.octostrip[self.mood.pattern],
