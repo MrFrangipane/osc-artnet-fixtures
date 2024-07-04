@@ -93,7 +93,7 @@ class Tristan200(BaseFixture):
         self._dim_factor *= dim
 
         self._mapping.pan = map_to_int(pan, 87,172)
-        self._mapping.tilt = map_to_int(tilt, 0,72)
+        self._mapping.tilt = map_to_int(tilt, 0,55)
 
     def _blinking(self):
         """
@@ -102,8 +102,9 @@ class Tristan200(BaseFixture):
         if self.mood.blinking > 0.80:
             self._mapping.color = 64  # open
 
-        if self.mood.blinking > 0.55:
-            self._mapping.shutter = map_to_int((self.mood.blinking - 0.55) / 0.45, 95, 125)
+        blinking_treshold = .65
+        if self.mood.blinking > blinking_treshold:
+            self._mapping.shutter = map_to_int((self.mood.blinking - blinking_treshold) / (1 - blinking_treshold), 95, 125)
 
     def _color_wheel(self):
         """
