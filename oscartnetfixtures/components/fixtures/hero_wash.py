@@ -20,8 +20,8 @@ class HeroWash(BaseFixture):
         tilt_fine: int = 0
         moving_speed: int = 0
         zoom: int = 0
-        dimmer: int = 0
-        strobe: int = 0
+        dimmer: int = 255
+        strobe: int = 255
         red_1: int = 0
         green_1: int = 0
         blue_1: int = 0
@@ -44,16 +44,21 @@ class HeroWash(BaseFixture):
     def __init__(self, address=None):
         super().__init__(address)
         self._mapping: HeroWash.Mapping = HeroWash.Mapping()
+        self._mapping.dimmer = 255
+
+        self._lightness = 0.5
 
         self._dim_factor = 1.0
         self._elapsed = 0
         self._symmetry = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
+        self._dim_factor = 1.0
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
         self._mapping = self.Mapping()
+        self._blinking()
         self._color()
         self._beam()
         self._animation()
@@ -64,7 +69,7 @@ class HeroWash(BaseFixture):
         return list(vars(self._mapping).values())
 
     def _beam(self):
-        self._mapping.zoom = self.mood.texture
+        self._mapping.zoom = map_to_int(self.mood.texture)
 
     def _animation(self):
         time_scale = [1.0, 1.0, 1.0, 2.0, 2.0][self.mood.bpm_scale]
@@ -84,11 +89,27 @@ class HeroWash(BaseFixture):
         self._mapping.pan = map_to_int(pan, 87,172)
         self._mapping.tilt = map_to_int(tilt, 0,72)
 
+    def _blinking(self):
+        """
+        Call after color wheel
+        """
+        if self.mood.blinking > 0.65:
+            self._mapping.strobe = 235
+
+        if self.mood.blinking > 0.80:
+            self._lightness = 0.5 + (self.mood.blinking - 0.8) * 2.5
+            self._mapping.strobe = 245
+
     def _color(self):
         """
         Call before blinking
         """
-        r, g, b, w = hsl_to_rgbw(self.mood.hue, 1.0, 1.0)
+        hue = self.mood.hue
+        if self.mood.palette == 3:
+            hue += 0.5
+            hue = hue % 1.0
+
+        r, g, b, w = hsl_to_rgbw(hue, 1.0, self._lightness)
 
         self._mapping.red_1 = int(r * 255)
         self._mapping.green_1 = int(g * 255)

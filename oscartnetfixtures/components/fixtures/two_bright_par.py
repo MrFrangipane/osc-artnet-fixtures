@@ -22,7 +22,7 @@ class TwoBrightPar(BaseFixture):
         amber: int = 0
         uv: int = 0
 
-    def map_from_hsl(self, hsl: HSL):
+    def map_from_hsl(self, hsl: HSL) -> list[int]:
         r, g, b, w = hsl_to_rgbw(hsl.h, hsl.s, hsl.l)
         mapping = self.Mapping()
         mapping.red = int(r * 255)
@@ -49,7 +49,7 @@ class TwoBrightPar(BaseFixture):
         #
         # Saturation
         if self.mood.blinking > self.desaturate_threshold:
-            saturation = 1.2 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
+            saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
         else:
             saturation = 1.0
 
