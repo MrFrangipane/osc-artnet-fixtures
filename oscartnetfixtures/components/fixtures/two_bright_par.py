@@ -60,10 +60,6 @@ class TwoBrightPar(BaseFixture):
         # value *= self.read_pattern(patterns.octostrip[self.mood.pattern])
 
         # Map
-        red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
-        mapping = self.Mapping()
-        mapping.red = map_to_int(red)
-        mapping.green = map_to_int(green)
-        mapping.blue = map_to_int(blue)
-
-        return list(vars(mapping).values())
+        return self.map_from_hsl(
+            HSL(hue, saturation, value)
+        )
