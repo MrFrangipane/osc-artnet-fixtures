@@ -43,6 +43,9 @@ class Tristan200(BaseFixture):
         self._wheels_blackout_timestamp = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
+        if self.mood.on_lyre == 0:
+            return [0] * 18
+
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 

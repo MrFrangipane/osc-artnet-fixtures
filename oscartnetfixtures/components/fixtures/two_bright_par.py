@@ -33,6 +33,9 @@ class TwoBrightPar(BaseFixture):
         return list(vars(mapping).values())
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
+        if self.mood.on_par == 0:
+            return [0] * 6
+
         #
         # Hue
         hue = self.mood.hue

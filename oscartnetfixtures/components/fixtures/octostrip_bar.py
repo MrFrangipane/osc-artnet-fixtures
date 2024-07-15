@@ -21,6 +21,9 @@ class OctostripBar(BaseFixture):
         chase: int = 0  # sound active 241-255
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
+        if self.mood.on_octo == 0:
+            return [0] * 6
+
         #
         # hue
         hue = self.mood.hue

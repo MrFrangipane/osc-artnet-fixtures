@@ -53,6 +53,9 @@ class HeroWash(BaseFixture):
         self._symmetry = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
+        if self.mood.on_octo == 0:
+            return [0] * 26
+
         self._dim_factor = 1.0
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
