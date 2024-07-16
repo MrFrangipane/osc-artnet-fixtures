@@ -48,10 +48,14 @@ class OctostripBar(BaseFixture):
 
         #
         # Animation
-        value *= self.read_pattern(
-            table=patterns.octostrip[self.mood.pattern],
-            time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale]
+        pattern = patterns.octostrip[self.mood.pattern]
+        
+        value *= pattern.read_pattern(
+            time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale],
+            group_position=self.group_position,
+            beat_counter=self.mood.beat_counter
         )
+            
         value *= group_dimmer
 
         strobe = 0
