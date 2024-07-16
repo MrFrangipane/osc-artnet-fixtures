@@ -43,9 +43,6 @@ class Tristan200(BaseFixture):
         self._wheels_blackout_timestamp = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
-        if self.mood.on_lyre == 0:
-            return [0] * 18
-
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
@@ -59,6 +56,10 @@ class Tristan200(BaseFixture):
             self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * group_dimmer
         )
         self._poll_for_wheels_blackout()
+
+        if self.mood.on_lyre == 0:
+            self._mapping.dimmer = 0
+
         return list(vars(self._mapping).values())
 
     def _beam(self):
@@ -95,8 +96,8 @@ class Tristan200(BaseFixture):
         )
         self._dim_factor *= dim
 
-        self._mapping.pan = map_to_int(pan, 87,172)
-        self._mapping.tilt = map_to_int(tilt, 0,55)
+        self._mapping.pan = map_to_int(pan, 100,145)
+        self._mapping.tilt = map_to_int(tilt, 29,70)
 
     def _blinking(self):
         """
@@ -133,6 +134,10 @@ class Tristan200(BaseFixture):
         ]
 
         hue = self.mood.hue
+        if self.mood.palette == 1 and self.group_place == 1:
+            hue += 0.5
+            hue = hue % 1.0
+
         if self.mood.palette == 3:
             hue += 0.5
             hue = hue % 1.0

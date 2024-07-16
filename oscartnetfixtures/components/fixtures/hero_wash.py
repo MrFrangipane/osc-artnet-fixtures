@@ -53,9 +53,6 @@ class HeroWash(BaseFixture):
         self._symmetry = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
-        if self.mood.on_wash == 0:
-            return [0] * 26
-
         self._dim_factor = 1.0
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
@@ -66,9 +63,14 @@ class HeroWash(BaseFixture):
         self._beam()
         self._animation()
 
-        self._mapping.dimmer = map_to_int(
-            self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * group_dimmer
-        )
+        if self.mood.pattern not in [2, 3]:
+            self._mapping.dimmer = map_to_int(
+                self.mood.master_dimmer * self.mood.recallable_dimmer * (1.0 - self._dim_factor) * group_dimmer
+            )
+
+        if self.mood.on_wash == 0:
+            self._mapping.dimmer = 0
+
         return list(vars(self._mapping).values())
 
     def _beam(self):
@@ -89,8 +91,15 @@ class HeroWash(BaseFixture):
         )
         self._dim_factor *= dim
 
-        self._mapping.pan = map_to_int(pan, 87,172)
-        self._mapping.tilt = map_to_int(tilt, 0,72)
+        if self.group_place == 0:
+            self._mapping.pan = map_to_int(pan, 132, 240)
+        else:
+            self._mapping.pan = map_to_int(pan, 44, 149)
+
+        if self.mood.pattern == 2:
+            self._mapping.tilt = map_to_int(tilt, 100,170)
+        else:
+            self._mapping.tilt = 0
 
     def _blinking(self):
         """
@@ -107,7 +116,12 @@ class HeroWash(BaseFixture):
         """
         Call before blinking
         """
+
         hue = self.mood.hue
+        if self.mood.palette == 1 and self.group_place == 1:
+            hue += 0.5
+            hue = hue % 1.0
+
         if self.mood.palette == 3:
             hue += 0.5
             hue = hue % 1.0
