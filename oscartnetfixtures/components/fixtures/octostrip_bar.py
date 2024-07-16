@@ -53,7 +53,8 @@ class OctostripBar(BaseFixture):
         value *= pattern.read_pattern(
             time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale],
             group_position=self.group_position,
-            beat_counter=self.mood.beat_counter
+            beat_counter=self.mood.beat_counter,
+            parameter=self.mood.pattern_parameter,
         )
             
         value *= group_dimmer
