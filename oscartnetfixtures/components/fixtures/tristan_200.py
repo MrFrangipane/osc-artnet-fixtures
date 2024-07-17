@@ -43,6 +43,10 @@ class Tristan200(BaseFixture):
         self._wheels_blackout_timestamp = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
+        if self.mood.on_talk and self.group_place == 0:
+            return [103, 0, 70, 72, 0, 0, 0, 0, 0, 107, 0, 255, 0, 0, 0, 106, 0, 0]
+            return [119, 0, 51, 72, 0, 0, 0, 0, 0, 107, 0, 255, 0, 0, 0, 106, 0, 0]
+
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
@@ -107,7 +111,7 @@ class Tristan200(BaseFixture):
             self._mapping.color = 64  # open
 
         if self.mood.on_strobe:
-            self._mapping.shutter = 100
+            self._mapping.shutter = 124  # 100 ou 124
 
     def _color_wheel(self):
         """
