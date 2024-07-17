@@ -12,6 +12,9 @@ _logger = logging.getLogger(__name__)
 
 
 class HeroWash(BaseFixture):
+
+    MAX_RGBW = 128
+
     @dataclass
     class Mapping:
         pan: int = 0
@@ -58,7 +61,7 @@ class HeroWash(BaseFixture):
         self._symmetry = (self.group_position * 2.0) - 1.0
 
         self._mapping = self.Mapping()
-        self._blinking()
+        self._strobe_and_white()
         self._color()
         self._beam()
         self._animation()
@@ -101,22 +104,19 @@ class HeroWash(BaseFixture):
         else:
             self._mapping.tilt = 0
 
-    def _blinking(self):
+    def _strobe_and_white(self):
         """
         Call after color wheel
         """
-        if self.mood.blinking > 0.65:
+        if self.mood.on_strobe:
             self._mapping.strobe = 235
 
-        if self.mood.blinking > 0.80:
-            self._lightness = 0.5 + (self.mood.blinking - 0.8) * 2.5
-            self._mapping.strobe = 245
+        self._lightness = self.mood.on_white
 
     def _color(self):
         """
-        Call before blinking
+        Call before color_and_white
         """
-
         hue = self.mood.hue
         if self.mood.palette == 1 and self.group_place == 1:
             hue += 0.5
@@ -128,17 +128,17 @@ class HeroWash(BaseFixture):
 
         r, g, b, w = hsl_to_rgbw(hue, 1.0, self._lightness)
 
-        self._mapping.red_1 = int(r * 255)
-        self._mapping.green_1 = int(g * 255)
-        self._mapping.blue_1 = int(b * 255)
-        self._mapping.white_1 = int(w * 255)
+        self._mapping.red_1 = int(r * self.MAX_RGBW)
+        self._mapping.green_1 = int(g * self.MAX_RGBW)
+        self._mapping.blue_1 = int(b * self.MAX_RGBW)
+        self._mapping.white_1 = int(w * self.MAX_RGBW)
 
-        self._mapping.red_2 = int(r * 255)
-        self._mapping.green_2 = int(g * 255)
-        self._mapping.blue_2 = int(b * 255)
-        self._mapping.white_2 = int(w * 255)
+        self._mapping.red_2 = int(r * self.MAX_RGBW)
+        self._mapping.green_2 = int(g * self.MAX_RGBW)
+        self._mapping.blue_2 = int(b * self.MAX_RGBW)
+        self._mapping.white_2 = int(w * self.MAX_RGBW)
 
-        self._mapping.red_3 = int(r * 255)
-        self._mapping.green_3 = int(g * 255)
-        self._mapping.blue_3 = int(b * 255)
-        self._mapping.white_3 = int(w * 255)
+        self._mapping.red_3 = int(r * self.MAX_RGBW)
+        self._mapping.green_3 = int(g * self.MAX_RGBW)
+        self._mapping.blue_3 = int(b * self.MAX_RGBW)
+        self._mapping.white_3 = int(w * self.MAX_RGBW)

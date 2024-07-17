@@ -29,7 +29,12 @@ class RGBPixel(BaseFixture):
             hue += self.group_position * 0.5 - 0.25
 
         # Map
-        r, g, b = colorsys.hls_to_rgb(hue, 0.5, 1.0)
+        if self.mood.on_white:
+            lightness = 1.0
+        else:
+            lightness = 0.5
+
+        r, g, b = colorsys.hls_to_rgb(hue, lightness, 1.0)
         return [
             map_to_int(r),
             map_to_int(g),

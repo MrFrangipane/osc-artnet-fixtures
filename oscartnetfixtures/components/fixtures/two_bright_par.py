@@ -51,18 +51,14 @@ class TwoBrightPar(BaseFixture):
 
         #
         # Saturation
-        if self.mood.blinking > self.desaturate_threshold:
-            saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
-        else:
-            saturation = 1.0
-
-        value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2) * saturation
-        value *= group_dimmer
+        lightness = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer * group_dimmer * 0.5, 2.2)
+        if self.mood.on_white:
+            lightness = 1.0
 
         # Animation
         # value *= self.read_pattern(patterns.octostrip[self.mood.pattern])
 
         # Map
         return self.map_from_hsl(
-            HSL(hue, saturation, value)
+            HSL(hue, 1.0, lightness)
         )

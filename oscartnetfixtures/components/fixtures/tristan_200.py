@@ -50,7 +50,7 @@ class Tristan200(BaseFixture):
         self._color_wheel()
         self._beam()
         self._animation()
-        self._blinking()
+        self._strobe_and_white()
 
         self._mapping.dimmer = map_to_int(
             self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * group_dimmer
@@ -99,20 +99,19 @@ class Tristan200(BaseFixture):
         self._mapping.pan = map_to_int(pan, 100,145)
         self._mapping.tilt = map_to_int(tilt, 29,70)
 
-    def _blinking(self):
+    def _strobe_and_white(self):
         """
         Call after color wheel
         """
-        if self.mood.blinking > 0.80:
+        if self.mood.on_white:
             self._mapping.color = 64  # open
 
-        blinking_treshold = .65
-        if self.mood.blinking > blinking_treshold:
-            self._mapping.shutter = map_to_int((self.mood.blinking - blinking_treshold) / (1 - blinking_treshold), 95, 125)
+        if self.mood.on_strobe:
+            self._mapping.shutter = 100
 
     def _color_wheel(self):
         """
-        Call before blinking
+        Call before strobe_and_white()
         """
         mapping = [
             [0.0, .03, 66],  # red

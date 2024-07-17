@@ -37,13 +37,6 @@ class OctostripBar(BaseFixture):
         elif self.mood.palette == 4:
             hue += self.group_position * 0.5 - 0.25
 
-        #
-        # Saturation
-        if self.mood.blinking > self.desaturate_threshold:
-            saturation = 1.0 - (self.mood.blinking - self.desaturate_threshold) / (1 - self.desaturate_threshold)
-        else:
-            saturation = 1.0
-
         value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2)
 
         #
@@ -58,10 +51,7 @@ class OctostripBar(BaseFixture):
         )
             
         value *= group_dimmer
-
-        strobe = 0
-        if self.mood.blinking > 0.7:
-            strobe = (self.mood.blinking - 0.5) * 2.0
+        saturation = 1.0 - self.mood.on_white
 
         # Map
         red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
@@ -69,7 +59,8 @@ class OctostripBar(BaseFixture):
         mapping.red = map_to_int(red)
         mapping.green = map_to_int(green)
         mapping.blue = map_to_int(blue)
-        if strobe:
-            mapping.strobe = map_to_int(strobe, 128, 255)
+
+        if self.mood.on_strobe:
+            mapping.strobe = 200
 
         return list(vars(mapping).values())
