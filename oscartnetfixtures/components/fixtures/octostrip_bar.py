@@ -48,8 +48,9 @@ class OctostripBar(BaseFixture):
             group_position=self.group_position,
             beat_counter=self.mood.beat_counter,
             parameter=self.mood.pattern_parameter,
+            playmode=self.mood.pattern_playmode
         )
-            
+        
         value *= group_dimmer
         saturation = 1.0 - self.mood.on_white
 
