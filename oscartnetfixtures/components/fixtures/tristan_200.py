@@ -48,7 +48,7 @@ class Tristan200(BaseFixture):
 
         self._mapping = self.Mapping()
 
-        pattern_step = PatternStoreAPI.get_step(fixture_type=self.__class__.__name__, group_place=self.group_place)
+        pattern_step = PatternStoreAPI.get_step_while_playing(fixture_type=self.__class__.__name__, group_place=self.group_place)
         for parameter, value in pattern_step.items():
             setattr(self._mapping, parameter, value)
 
