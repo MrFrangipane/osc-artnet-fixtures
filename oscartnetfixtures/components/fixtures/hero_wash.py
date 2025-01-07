@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
 
-from oscartnetfixtures.components import patterns
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
 
 
@@ -52,22 +51,21 @@ class HeroWash(BaseFixture):
         self._lightness = 0.5
 
         self._dim_factor = 1.0
-        self._elapsed = 0
         self._symmetry = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
-        if self.mood.on_talk and self.group_place == 0:
-            return [93, 0, 39, 0, 0, 169, 32, 255, 0, 0, 0, 0, 225, 192, 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
         self._dim_factor = 1.0
-        self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
         self._mapping = self.Mapping()
+
+        # pattern_step = PatternStoreAPI.get_step(fixture_type=self.__class__.__name__, group_place=self.group_place)
+        # for parameter, value in pattern_step.items():
+        #     setattr(self._mapping, parameter, value)
+
         self._strobe_and_white()
         self._color()
         self._beam()
-        self._animation()
 
         if self.mood.pattern not in [2, 3]:
             self._mapping.dimmer = map_to_int(
@@ -81,31 +79,6 @@ class HeroWash(BaseFixture):
 
     def _beam(self):
         self._mapping.zoom = map_to_int(self.mood.texture)
-
-    def _animation(self):
-        time_scale = [1.0, 1.0, 1.0, 2.0, 2.0][self.mood.bpm_scale]
-
-        pan, dim = self.read_pattern(
-            table=patterns.tristan200_pan[self.mood.pattern],
-            time_scale=time_scale
-        )
-        self._dim_factor *= dim
-
-        tilt, dim = self.read_pattern(
-            table=patterns.tristan200_tilt[self.mood.pattern],
-            time_scale=time_scale
-        )
-        self._dim_factor *= dim
-
-        if self.group_place == 0:
-            self._mapping.pan = map_to_int(pan, 132, 240)
-        else:
-            self._mapping.pan = map_to_int(pan, 44, 149)
-
-        if self.mood.pattern == 2:
-            self._mapping.tilt = map_to_int(tilt, 100,170)
-        else:
-            self._mapping.tilt = 0
 
     def _strobe_and_white(self):
         """

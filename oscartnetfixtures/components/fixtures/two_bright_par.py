@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
 
-from oscartnetfixtures.components import patterns
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
 from oscartnetdaemon.core.osc.two_bright_par import HSL  # fixme ?

@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
 
-from oscartnetfixtures.components import patterns
 from oscartnetfixtures.python_extensions.math import map_to_int
 
 
@@ -41,15 +40,15 @@ class OctostripBar(BaseFixture):
 
         #
         # Animation
-        pattern = patterns.octostrip[self.mood.pattern]
-        
-        value *= pattern.read_pattern(
-            time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale],
-            group_position=self.group_position,
-            beat_counter=self.mood.beat_counter,
-            parameter=self.mood.pattern_parameter,
-            playmode=self.mood.pattern_playmode
-        )
+        # pattern = patterns.octostrip[self.mood.pattern]
+        #
+        # value *= pattern.read_pattern(
+        #     time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale],
+        #     group_position=self.group_position,
+        #     beat_counter=self.mood.beat_counter,
+        #     parameter=self.mood.pattern_parameter,
+        #     playmode=self.mood.pattern_playmode
+        # )
         
         value *= group_dimmer
         saturation = 1.0 - self.mood.on_white

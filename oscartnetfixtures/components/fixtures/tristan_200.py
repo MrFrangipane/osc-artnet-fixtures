@@ -3,9 +3,9 @@ import time
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
+from oscartnetdaemon.components.pattern_store.api import PatternStoreAPI
 
-from oscartnetfixtures.components import patterns
-from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
+from oscartnetfixtures.python_extensions.math import map_to_int
 
 _logger = logging.getLogger(__name__)
 
@@ -43,17 +43,17 @@ class Tristan200(BaseFixture):
         self._wheels_blackout_timestamp = 0
 
     def map_to_channels(self, group_dimmer: float) -> list[int]:
-        if self.mood.on_talk and self.group_place == 0:
-            return [103, 0, 70, 72, 0, 0, 0, 0, 0, 107, 0, 255, 0, 0, 0, 106, 0, 0]
-            return [119, 0, 51, 72, 0, 0, 0, 0, 0, 107, 0, 255, 0, 0, 0, 106, 0, 0]
-
         self._elapsed += 0.1
         self._symmetry = (self.group_position * 2.0) - 1.0
 
         self._mapping = self.Mapping()
+
+        pattern_step = PatternStoreAPI.get_step(fixture_type=self.__class__.__name__, group_place=self.group_place)
+        for parameter, value in pattern_step.items():
+            setattr(self._mapping, parameter, value)
+
         self._color_wheel()
         self._beam()
-        self._animation()
         self._strobe_and_white()
 
         self._mapping.dimmer = map_to_int(
@@ -84,24 +84,6 @@ class Tristan200(BaseFixture):
             self._mapping.prism = 26
             self._mapping.frost = 144
             self._dim_factor = 0.4
-
-    def _animation(self):
-        time_scale = [1.0, 1.0, 1.0, 2.0, 2.0][self.mood.bpm_scale]
-
-        pan, dim = self.read_pattern(
-            table=patterns.tristan200_pan[self.mood.pattern],
-            time_scale=time_scale
-        )
-        self._dim_factor *= dim
-
-        tilt, dim = self.read_pattern(
-            table=patterns.tristan200_tilt[self.mood.pattern],
-            time_scale=time_scale
-        )
-        self._dim_factor *= dim
-
-        self._mapping.pan = map_to_int(pan, 100,145)
-        self._mapping.tilt = map_to_int(tilt, 29,70)
 
     def _strobe_and_white(self):
         """
