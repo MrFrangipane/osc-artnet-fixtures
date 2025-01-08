@@ -3,6 +3,8 @@ import math
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
+from oscartnetdaemon.core.mood import Mood
+from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
@@ -31,27 +33,27 @@ class TwoBrightPar(BaseFixture):
 
         return list(vars(mapping).values())
 
-    def map_to_channels(self, group_dimmer: float) -> list[int]:
-        if self.mood.on_par == 0:
+    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
+        if mood.on_par == 0:
             return [0] * 6
 
         #
         # Hue
-        hue = self.mood.hue
+        hue = mood.hue
 
-        if self.mood.palette == 1 and self.group_place in [0, self.group_size - 1]:
+        if mood.palette == 1 and group_info.place in [0, group_info.size - 1]:
             hue += 0.5
 
-        if self.mood.palette == 2 and self.group_place not in [0, self.group_size - 1]:
+        if mood.palette == 2 and group_info.place not in [0, group_info.size - 1]:
             hue += 0.33
 
-        elif self.mood.palette == 4:
-            hue += self.group_position * 0.5 - 0.25
+        elif mood.palette == 4:
+            hue += group_info.position * 0.5 - 0.25
 
         #
         # Saturation
-        lightness = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer * group_dimmer * 0.5, 2.2)
-        if self.mood.on_white:
+        lightness = math.pow(mood.master_dimmer * mood.recallable_dimmer * dimmer_value * 0.5, 2.2)
+        if mood.on_white:
             lightness = 1.0
 
         # Animation

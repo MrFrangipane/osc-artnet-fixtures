@@ -2,6 +2,8 @@ import logging
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
+from oscartnetdaemon.core.mood import Mood
+from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
 
 from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
@@ -45,7 +47,6 @@ class HeroWash(BaseFixture):
 
     def __init__(self, address=None):
         super().__init__(address)
-        self._mapping: HeroWash.Mapping = HeroWash.Mapping()
         self._mapping.dimmer = 255
 
         self._lightness = 0.5
@@ -53,7 +54,7 @@ class HeroWash(BaseFixture):
         self._dim_factor = 1.0
         self._symmetry = 0
 
-    def map_to_channels(self, group_dimmer: float) -> list[int]:
+    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
         self._dim_factor = 1.0
         self._symmetry = (self.group_position * 2.0) - 1.0
 

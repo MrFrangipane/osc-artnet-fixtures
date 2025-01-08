@@ -3,6 +3,8 @@ import time
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
+from oscartnetdaemon.core.mood import Mood
+from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 from oscartnetdaemon.components.pattern_store.api import PatternStoreAPI
 
 from oscartnetfixtures.python_extensions.math import map_to_int
@@ -42,42 +44,45 @@ class Tristan200(BaseFixture):
         self._symmetry = 0
         self._wheels_blackout_timestamp = 0
 
-    def map_to_channels(self, group_dimmer: float) -> list[int]:
+    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
         self._elapsed += 0.1
-        self._symmetry = (self.group_position * 2.0) - 1.0
+        self._symmetry = (group_info.position * 2.0) - 1.0
 
         self._mapping = self.Mapping()
 
-        pattern_step = PatternStoreAPI.get_step_while_playing(fixture_type=self.__class__.__name__, group_place=self.group_place)
+        pattern_step = PatternStoreAPI.get_step_while_playing(
+            fixture_type=self.__class__.__name__,
+            group_place=group_info.place
+        )
         for parameter, value in pattern_step.items():
             setattr(self._mapping, parameter, value)
 
-        self._color_wheel()
-        self._beam()
-        self._strobe_and_white()
+        self._color_wheel(mood, group_info)
+        self._beam(mood, group_info)
+        self._strobe_and_white(mood, group_info)
 
         self._mapping.dimmer = map_to_int(
-            self.mood.master_dimmer * self.mood.recallable_dimmer * self._dim_factor * group_dimmer
+            mood.master_dimmer * mood.recallable_dimmer * self._dim_factor * dimmer_value
         )
         self._poll_for_wheels_blackout()
 
-        if self.mood.on_lyre == 0:
+        if mood.on_lyre == 0:
             self._mapping.dimmer = 0
 
         return list(vars(self._mapping).values())
 
-    def _beam(self):
-        if self.mood.texture > .66:
+    def _beam(self, mood: Mood, group_info: ShowItemGroupInfo):
+        if mood.texture > .66:
             self._mapping.focus = 255
             self._mapping.gobo2 = 11
             self._dim_factor = 1.0
 
-        elif self.mood.texture > .33:
+        elif mood.texture > .33:
             self._mapping.focus = 255
             self._mapping.gobo1 = 28
             self._mapping.prism = 26
             self._mapping.frost = 34
-            self._mapping.prism_rotation = 179 + int(self.group_position * 27)
+            self._mapping.prism_rotation = 179 + int(group_info.position * 27)
             self._dim_factor = 0.6
 
         else:
@@ -85,17 +90,17 @@ class Tristan200(BaseFixture):
             self._mapping.frost = 144
             self._dim_factor = 0.4
 
-    def _strobe_and_white(self):
+    def _strobe_and_white(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
         Call after color wheel
         """
-        if self.mood.on_white:
+        if mood.on_white:
             self._mapping.color = 64  # open
 
-        if self.mood.on_strobe:
+        if mood.on_strobe:
             self._mapping.shutter = 124  # 100 ou 124
 
-    def _color_wheel(self):
+    def _color_wheel(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
         Call before strobe_and_white()
         """
@@ -118,12 +123,12 @@ class Tristan200(BaseFixture):
             [.98, 1.0, 66]   # red
         ]
 
-        hue = self.mood.hue
-        if self.mood.palette == 1 and self.group_place == 1:
+        hue = mood.hue
+        if mood.palette == 1 and group_info.place == 1:
             hue += 0.5
             hue = hue % 1.0
 
-        if self.mood.palette == 3:
+        if mood.palette == 3:
             hue += 0.5
             hue = hue % 1.0
 

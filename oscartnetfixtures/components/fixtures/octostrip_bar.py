@@ -3,6 +3,8 @@ import math
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
+from oscartnetdaemon.core.mood import Mood
+from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
 from oscartnetfixtures.python_extensions.math import map_to_int
 
@@ -19,39 +21,25 @@ class OctostripBar(BaseFixture):
         strobe: int = 0  # 1-20 Hz
         chase: int = 0  # sound active 241-255
 
-    def map_to_channels(self, group_dimmer: float) -> list[int]:
-        if self.mood.on_octo == 0:
+    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
+        if mood.on_octo == 0:
             return [0] * 6
 
         #
         # hue
-        hue = self.mood.hue
+        hue = mood.hue
 
-        if self.mood.palette == 1 and self.group_place % 2:
+        if mood.palette == 1 and group_info.place % 2:
             hue += 0.5
 
-        if self.mood.palette == 2 and self.group_place not in [0, self.group_size - 1]:
+        if mood.palette == 2 and group_info.place not in [0, group_info.size - 1]:
             hue += 0.33
 
-        elif self.mood.palette == 4:
-            hue += self.group_position * 0.5 - 0.25
+        elif mood.palette == 4:
+            hue += group_info.position * 0.5 - 0.25
 
-        value = math.pow(self.mood.master_dimmer * self.mood.recallable_dimmer, 2.2)
-
-        #
-        # Animation
-        # pattern = patterns.octostrip[self.mood.pattern]
-        #
-        # value *= pattern.read_pattern(
-        #     time_scale=[0.25, 0.5, 1.0, 2.0, 4.0][self.mood.bpm_scale],
-        #     group_position=self.group_position,
-        #     beat_counter=self.mood.beat_counter,
-        #     parameter=self.mood.pattern_parameter,
-        #     playmode=self.mood.pattern_playmode
-        # )
-        
-        value *= group_dimmer
-        saturation = 1.0 - self.mood.on_white
+        value = math.pow(dimmer_value * mood.master_dimmer * mood.recallable_dimmer, 2.2)
+        saturation = 1.0 - mood.on_white
 
         # Map
         red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
@@ -60,7 +48,7 @@ class OctostripBar(BaseFixture):
         mapping.green = map_to_int(green)
         mapping.blue = map_to_int(blue)
 
-        if self.mood.on_strobe:
+        if mood.on_strobe:
             mapping.strobe = 200
 
         return list(vars(mapping).values())
