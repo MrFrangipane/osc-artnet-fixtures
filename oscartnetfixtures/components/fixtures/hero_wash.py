@@ -6,6 +6,7 @@ from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
 
+from oscartnetfixtures.python_extensions.math import map_to_int
 
 _logger = logging.getLogger(__name__)
 
@@ -56,6 +57,9 @@ class HeroWash(BaseFixture):
         self._symmetry = (group_info.position * 2.0) - 1.0
         self._strobe_and_white(mood, group_info)
         self._color(mood, group_info)
+        self._mapping.dimmer = map_to_int(
+            mood.master_dimmer * mood.recallable_dimmer * dimmer_value * (self._mapping.dimmer / 255.0)
+        )
 
         if mood.on_wash == 0:
             self._mapping.dimmer = 0

@@ -37,7 +37,6 @@ class Tristan200(BaseFixture):
         super().__init__(address)
         self._mapping = Tristan200.Mapping()
 
-        self._dim_factor = 1.0
         self._elapsed = 0
         self._previous_color = 0
         self._symmetry = 0
@@ -52,7 +51,7 @@ class Tristan200(BaseFixture):
         self._color_wheel(mood, group_info)
         self._strobe_and_white(mood, group_info)
         self._mapping.dimmer = map_to_int(
-            mood.master_dimmer * mood.recallable_dimmer * self._dim_factor * dimmer_value * (self._mapping.dimmer / 255.0)
+            mood.master_dimmer * mood.recallable_dimmer * dimmer_value * (self._mapping.dimmer / 255.0)
         )
 
         if mood.on_lyre == 0:
