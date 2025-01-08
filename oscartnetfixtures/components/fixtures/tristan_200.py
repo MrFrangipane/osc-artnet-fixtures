@@ -44,18 +44,12 @@ class Tristan200(BaseFixture):
         self._symmetry = 0
         self._wheels_blackout_timestamp = 0
 
-    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
+    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
         self._elapsed += 0.1
         self._symmetry = (group_info.position * 2.0) - 1.0
 
         self._mapping = self.Mapping()
-
-        pattern_step = PatternStoreAPI.get_step_while_playing(
-            fixture_type=self.__class__.__name__,
-            group_place=group_info.place
-        )
-        for parameter, value in pattern_step.items():
-            setattr(self._mapping, parameter, value)
+        self.apply_pattern_while_playing(group_info)
 
         self._color_wheel(mood, group_info)
         self._beam(mood, group_info)

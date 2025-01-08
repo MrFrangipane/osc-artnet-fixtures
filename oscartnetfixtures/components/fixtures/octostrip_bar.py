@@ -21,7 +21,7 @@ class OctostripBar(BaseFixture):
         strobe: int = 0  # 1-20 Hz
         chase: int = 0  # sound active 241-255
 
-    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
+    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
         if mood.on_octo == 0:
             return [0] * 6
 

@@ -16,7 +16,7 @@ class RGBPixel(BaseFixture):
         green: int = 0
         blue: int = 0
 
-    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
+    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
         #
         # Hue
         hue = mood.hue

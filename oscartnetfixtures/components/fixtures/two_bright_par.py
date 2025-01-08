@@ -33,7 +33,7 @@ class TwoBrightPar(BaseFixture):
 
         return list(vars(mapping).values())
 
-    def map_to_channels(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
+    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
         if mood.on_par == 0:
             return [0] * 6
 
