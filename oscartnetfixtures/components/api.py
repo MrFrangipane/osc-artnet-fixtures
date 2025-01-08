@@ -13,7 +13,6 @@ _logger = logging.getLogger(__name__)
 class OSCArtnetFixturesAPI:
     hero_wash = None
     octostrip_bar = None
-    rgb_pixel = None
     tristan_200 = None
     two_bright_par = None
 
@@ -23,19 +22,16 @@ class OSCArtnetFixturesAPI:
 
         from oscartnetfixtures.components.fixtures import hero_wash
         from oscartnetfixtures.components.fixtures import octostrip_bar
-        from oscartnetfixtures.components.fixtures import rgb_pixel
         from oscartnetfixtures.components.fixtures import tristan_200
         from oscartnetfixtures.components.fixtures import two_bright_par
 
         importlib.reload(hero_wash)
         importlib.reload(octostrip_bar)
-        importlib.reload(rgb_pixel)
         importlib.reload(tristan_200)
         importlib.reload(two_bright_par)
 
         OSCArtnetFixturesAPI.hero_wash = hero_wash
         OSCArtnetFixturesAPI.octostrip_bar = octostrip_bar
-        OSCArtnetFixturesAPI.rgb_pixel = rgb_pixel
         OSCArtnetFixturesAPI.tristan_200 = tristan_200
         OSCArtnetFixturesAPI.two_bright_par = two_bright_par
 
@@ -44,7 +40,6 @@ class OSCArtnetFixturesAPI:
         classes = {cls.__name__: cls for cls in [
             OSCArtnetFixturesAPI.hero_wash.HeroWash,
             OSCArtnetFixturesAPI.octostrip_bar.OctostripBar,
-            OSCArtnetFixturesAPI.rgb_pixel.RGBPixel,
             OSCArtnetFixturesAPI.tristan_200.Tristan200,
             OSCArtnetFixturesAPI.two_bright_par.TwoBrightPar
         ]}

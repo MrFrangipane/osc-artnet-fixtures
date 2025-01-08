@@ -6,8 +6,6 @@ from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
 
-from oscartnetfixtures.python_extensions.math import map_to_int, p_cos
-
 
 _logger = logging.getLogger(__name__)
 
@@ -48,58 +46,39 @@ class HeroWash(BaseFixture):
     def __init__(self, address=None):
         super().__init__(address)
         self._mapping.dimmer = 255
-
         self._lightness = 0.5
-
-        self._dim_factor = 1.0
         self._symmetry = 0
 
-    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
-        self._dim_factor = 1.0
-        self._symmetry = (self.group_position * 2.0) - 1.0
-
+    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
         self._mapping = self.Mapping()
+        self.apply_pattern_while_playing(group_info)
 
-        # pattern_step = PatternStoreAPI.get_step(fixture_type=self.__class__.__name__, group_place=self.group_place)
-        # for parameter, value in pattern_step.items():
-        #     setattr(self._mapping, parameter, value)
+        self._symmetry = (group_info.position * 2.0) - 1.0
+        self._strobe_and_white(mood, group_info)
+        self._color(mood, group_info)
 
-        self._strobe_and_white()
-        self._color()
-        self._beam()
-
-        if self.mood.pattern not in [2, 3]:
-            self._mapping.dimmer = map_to_int(
-                self.mood.master_dimmer * self.mood.recallable_dimmer * (1.0 - self._dim_factor) * group_dimmer
-            )
-
-        if self.mood.on_wash == 0:
+        if mood.on_wash == 0:
             self._mapping.dimmer = 0
 
-        return list(vars(self._mapping).values())
-
-    def _beam(self):
-        self._mapping.zoom = map_to_int(self.mood.texture)
-
-    def _strobe_and_white(self):
+    def _strobe_and_white(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
         Call after color wheel
         """
-        if self.mood.on_strobe:
+        if mood.on_strobe:
             self._mapping.strobe = 235
 
-        self._lightness = 1.0 if self.mood.on_white else 0.5
+        self._lightness = 1.0 if mood.on_white else 0.5
 
-    def _color(self):
+    def _color(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
         Call before color_and_white
         """
-        hue = self.mood.hue
-        if self.mood.palette == 1 and self.group_place == 1:
+        hue = mood.hue
+        if mood.palette == 1 and group_info.place == 1:
             hue += 0.5
             hue = hue % 1.0
 
-        if self.mood.palette == 3:
+        if mood.palette == 3:
             hue += 0.5
             hue = hue % 1.0
 

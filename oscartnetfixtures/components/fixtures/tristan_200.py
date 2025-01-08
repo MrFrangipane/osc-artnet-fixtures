@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
-from oscartnetdaemon.components.pattern_store.api import PatternStoreAPI
 
 from oscartnetfixtures.python_extensions.math import map_to_int
 
@@ -44,45 +43,22 @@ class Tristan200(BaseFixture):
         self._symmetry = 0
         self._wheels_blackout_timestamp = 0
 
-    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo) -> list[int]:
-        self._elapsed += 0.1
-        self._symmetry = (group_info.position * 2.0) - 1.0
-
+    def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
         self._mapping = self.Mapping()
         self.apply_pattern_while_playing(group_info)
 
+        self._elapsed += 0.1
+        self._symmetry = (group_info.position * 2.0) - 1.0
         self._color_wheel(mood, group_info)
-        self._beam(mood, group_info)
         self._strobe_and_white(mood, group_info)
-
         self._mapping.dimmer = map_to_int(
-            mood.master_dimmer * mood.recallable_dimmer * self._dim_factor * dimmer_value
+            mood.master_dimmer * mood.recallable_dimmer * self._dim_factor * dimmer_value * (self._mapping.dimmer / 255.0)
         )
-        self._poll_for_wheels_blackout()
 
         if mood.on_lyre == 0:
             self._mapping.dimmer = 0
 
-        return list(vars(self._mapping).values())
-
-    def _beam(self, mood: Mood, group_info: ShowItemGroupInfo):
-        if mood.texture > .66:
-            self._mapping.focus = 255
-            self._mapping.gobo2 = 11
-            self._dim_factor = 1.0
-
-        elif mood.texture > .33:
-            self._mapping.focus = 255
-            self._mapping.gobo1 = 28
-            self._mapping.prism = 26
-            self._mapping.frost = 34
-            self._mapping.prism_rotation = 179 + int(group_info.position * 27)
-            self._dim_factor = 0.6
-
-        else:
-            self._mapping.prism = 26
-            self._mapping.frost = 144
-            self._dim_factor = 0.4
+        self._poll_for_wheels_blackout()
 
     def _strobe_and_white(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
