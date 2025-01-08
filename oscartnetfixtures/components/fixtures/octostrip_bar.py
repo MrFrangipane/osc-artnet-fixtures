@@ -22,8 +22,8 @@ class OctostripBar(BaseFixture):
         chase: int = 0  # sound active 241-255
 
     def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
-        self._mapping = self.Mapping()
         if mood.on_octo == 0:
+            self._mapping = self.Mapping()
             return
 
         self.apply_pattern_while_playing(group_info)

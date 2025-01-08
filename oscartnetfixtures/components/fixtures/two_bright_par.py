@@ -21,8 +21,8 @@ class TwoBrightPar(BaseFixture):
         uv: int = 0
 
     def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
-        self._mapping = self.Mapping()
         if mood.on_par == 0:
+            self._mapping = self.Mapping()
             return
 
         self.apply_pattern_while_playing(group_info)

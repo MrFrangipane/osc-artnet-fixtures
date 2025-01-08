@@ -43,7 +43,6 @@ class Tristan200(BaseFixture):
         self._wheels_blackout_timestamp = 0
 
     def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
-        self._mapping = self.Mapping()
         self.apply_pattern_while_playing(group_info)
 
         self._elapsed += 0.1
