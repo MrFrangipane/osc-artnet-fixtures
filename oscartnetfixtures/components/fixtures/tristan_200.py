@@ -50,7 +50,7 @@ class Tristan200(BaseFixture):
         self._color_wheel(mood, group_info)
         self._strobe_and_white(mood, group_info)
         self._mapping.dimmer = map_to_int(
-            mood.master_dimmer * mood.recallable_dimmer * dimmer_value * (self._mapping.dimmer / 255.0)
+            mood.master_dimmer * mood.recallable_dimmer * dimmer_value * (float(self._mapping.dimmer) / 255.0)
         )
 
         if mood.on_lyre == 0:
