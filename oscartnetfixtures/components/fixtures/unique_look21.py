@@ -19,5 +19,4 @@ class UniqueLook21(BaseFixture):
         self.apply_pattern_while_playing(group_info)
 
         if mood.on_smoke == 0:
-            self._mapping.pump = 0
-            self._mapping.fan = 0
+            self._mapping = self.Mapping()
