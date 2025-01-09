@@ -1,4 +1,3 @@
-import logging
 import time
 from dataclasses import dataclass
 
@@ -7,8 +6,6 @@ from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
 from oscartnetfixtures.python_extensions.math import map_to_int
-
-_logger = logging.getLogger(__name__)
 
 
 class Tristan200(BaseFixture):

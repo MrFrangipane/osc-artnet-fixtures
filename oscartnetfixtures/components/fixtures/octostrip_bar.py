@@ -6,8 +6,6 @@ from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
-from oscartnetfixtures.python_extensions.math import map_to_int
-
 
 class OctostripBar(BaseFixture):
     desaturate_threshold = 0.5

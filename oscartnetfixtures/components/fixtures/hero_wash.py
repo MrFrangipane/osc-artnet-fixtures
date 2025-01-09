@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 
 from oscartnetdaemon.core.fixture.base import BaseFixture
@@ -7,8 +6,6 @@ from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
 
 from oscartnetfixtures.python_extensions.math import map_to_int
-
-_logger = logging.getLogger(__name__)
 
 
 class HeroWash(BaseFixture):
@@ -44,7 +41,6 @@ class HeroWash(BaseFixture):
 
     def __init__(self, address=None):
         super().__init__(address)
-        self._mapping.dimmer = 255
         self._lightness = 0.5
         self._symmetry = 0
 
