@@ -28,7 +28,7 @@ class OctostripBar(BaseFixture):
         self._color(mood, dimmer_value, group_info)
 
         if mood.on_strobe:
-            self._mapping.strobe = 200
+            self._mapping.strobe = 251
 
     def _color(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
         hue = mood.hue
