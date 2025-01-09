@@ -32,14 +32,18 @@ class OctostripBar(BaseFixture):
 
     def _color(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
         hue = mood.hue
+
+        # 180
         if mood.palette == 1 and group_info.place % 2:
             hue += 0.5
 
+        # 120
         if mood.palette == 2 and group_info.place not in [0, group_info.size - 1]:
             hue += 0.33
 
+        # Rainbow
         elif mood.palette == 4:
-            hue += group_info.position * 0.5 - 0.25
+            hue += (group_info.position * 0.5 - 0.25) % 1.0
 
         value = math.pow(dimmer_value * mood.master_dimmer * mood.recallable_dimmer, 2.2)
         saturation = 1.0 - mood.on_white
