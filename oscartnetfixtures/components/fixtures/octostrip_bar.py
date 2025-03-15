@@ -6,6 +6,8 @@ from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
+from oscartnetdaemon.python_extensions.colors import colorize
+
 
 class OctostripBar(BaseFixture):
     desaturate_threshold = 0.5
@@ -50,6 +52,6 @@ class OctostripBar(BaseFixture):
 
         # Map
         red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
-        self._mapping.red = int(self._mapping.red * red)
-        self._mapping.green = int(self._mapping.green * green)
-        self._mapping.blue = int(self._mapping.blue * blue)
+        self._mapping.red = colorize(self._mapping.red, mood.colorize_octo, red)
+        self._mapping.green = colorize(self._mapping.green, mood.colorize_octo, green)
+        self._mapping.blue = colorize(self._mapping.blue, mood.colorize_octo, blue)

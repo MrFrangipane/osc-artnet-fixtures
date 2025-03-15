@@ -5,7 +5,7 @@ from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
-from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
+from oscartnetdaemon.python_extensions.colors import colorize, hsl_to_rgbw
 
 
 class TwoBrightPar(BaseFixture):
@@ -49,7 +49,9 @@ class TwoBrightPar(BaseFixture):
 
         # Map
         r, g, b, w = hsl_to_rgbw(hue, saturation, lightness * 0.5)
-        self._mapping.red = int(self._mapping.red * r)
-        self._mapping.green = int(self._mapping.green * g)
-        self._mapping.blue = int(self._mapping.blue * b)
-        self._mapping.white = int(self._mapping.white * w)
+        self._mapping.red = colorize(self._mapping.red, mood.colorize_par, r)
+        self._mapping.green = colorize(self._mapping.green, mood.colorize_par, g)
+        self._mapping.blue = colorize(self._mapping.blue, mood.colorize_par, b)
+        self._mapping.white = colorize(self._mapping.white, mood.colorize_par, w)
+        self._mapping.amber = colorize(self._mapping.amber * dimmer_value, mood.colorize_par, 0)
+        self._mapping.uv = colorize(self._mapping.uv * dimmer_value, mood.colorize_par, 0)

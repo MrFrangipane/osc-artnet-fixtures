@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
-from oscartnetdaemon.python_extensions.colors import hsl_to_rgbw
+
+from oscartnetdaemon.python_extensions.colors import colorize, hsl_to_rgbw
 
 from oscartnetfixtures.python_extensions.math import map_to_int
 
@@ -81,17 +82,17 @@ class HeroWash(BaseFixture):
 
         r, g, b, w = hsl_to_rgbw(hue, 1.0, self._lightness)
 
-        self._mapping.red_1 = int(r * self._mapping.red_1)
-        self._mapping.green_1 = int(g * self._mapping.green_1)
-        self._mapping.blue_1 = int(b * self._mapping.blue_1)
-        self._mapping.white_1 = int(w * self._mapping.white_1)
+        self._mapping.red_1 = colorize(self._mapping.red_1, mood.colorize_wash, r)
+        self._mapping.green_1 = colorize(self._mapping.green_1, mood.colorize_wash, g)
+        self._mapping.blue_1 = colorize(self._mapping.blue_1, mood.colorize_wash, b)
+        self._mapping.white_1 = colorize(self._mapping.white_1, mood.colorize_wash, w)
 
-        self._mapping.red_2 = int(r * self._mapping.red_2)
-        self._mapping.green_2 = int(g * self._mapping.green_2)
-        self._mapping.blue_2 = int(b * self._mapping.blue_2)
-        self._mapping.white_2 = int(w * self._mapping.white_2)
+        self._mapping.red_2 = colorize(self._mapping.red_2, mood.colorize_wash, r)
+        self._mapping.green_2 = colorize(self._mapping.green_2, mood.colorize_wash, g)
+        self._mapping.blue_2 = colorize(self._mapping.blue_2, mood.colorize_wash, b)
+        self._mapping.white_2 = colorize(self._mapping.white_2, mood.colorize_wash, w)
 
-        self._mapping.red_3 = int(r * self._mapping.red_3)
-        self._mapping.green_3 = int(g * self._mapping.green_3)
-        self._mapping.blue_3 = int(b * self._mapping.blue_3)
-        self._mapping.white_3 = int(w * self._mapping.white_3)
+        self._mapping.red_3 = colorize(self._mapping.red_3, mood.colorize_wash, r)
+        self._mapping.green_3 = colorize(self._mapping.green_3, mood.colorize_wash, g)
+        self._mapping.blue_3 = colorize(self._mapping.blue_3, mood.colorize_wash, b)
+        self._mapping.white_3 = colorize(self._mapping.white_3, mood.colorize_wash, w)
