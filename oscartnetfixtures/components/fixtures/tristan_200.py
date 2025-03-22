@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from oscartnetdaemon.core.fixture.base import BaseFixture
 from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
+from oscartnetfixtures.components.color import Color
 
 from oscartnetfixtures.python_extensions.math import map_to_int
 
@@ -50,6 +51,24 @@ class Tristan200(BaseFixture):
             mood.master_dimmer * mood.recallable_dimmer * dimmer_value * (float(self._mapping.dimmer) / 255.0)
         )
 
+        if mood.beam_shape == 0:
+            self._mapping.gobo2 = 11
+            self._mapping.focus = 255
+            self._mapping.prism = 0
+            self._mapping.frost = 0
+
+        elif mood.beam_shape == 1:
+            self._mapping.gobo2 = 0
+            self._mapping.focus = 0
+            self._mapping.prism = 0
+            self._mapping.frost = 40
+
+        elif mood.beam_shape == 2:
+            self._mapping.gobo2 = 0
+            self._mapping.focus = 0
+            self._mapping.prism = 21
+            self._mapping.frost = 40
+
         if mood.on_lyre == 0:
             self._mapping.dimmer = 0
 
@@ -88,14 +107,7 @@ class Tristan200(BaseFixture):
             [.98, 1.0, 66]   # red
         ]
 
-        hue = mood.hue
-        if mood.palette == 1 and group_info.place == 1:
-            hue += 0.5
-            hue = hue % 1.0
-
-        if mood.palette == 3:
-            hue += 0.5
-            hue = hue % 1.0
+        hue = Color.get_hue_from_palette(mood, group_info)
 
         for min_, max_, value in mapping:
             if min_ <= hue <= max_:

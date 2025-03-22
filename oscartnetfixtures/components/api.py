@@ -9,6 +9,7 @@ from oscartnetfixtures.components.fixtures import octostrip_bar
 from oscartnetfixtures.components.fixtures import tristan_200
 from oscartnetfixtures.components.fixtures import two_bright_par
 from oscartnetfixtures.components.fixtures import unique_look21
+from oscartnetfixtures.components import color
 
 _logger = logging.getLogger(__name__)
 
@@ -23,6 +24,8 @@ class OSCArtnetFixturesAPI:
     @staticmethod
     def reload_definitions():
         _logger.info("Reloading fixtures and patterns definitions")
+
+        importlib.reload(color)
 
         importlib.reload(hero_wash)
         importlib.reload(octostrip_bar)

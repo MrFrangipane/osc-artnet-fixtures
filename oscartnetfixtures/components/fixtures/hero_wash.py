@@ -5,6 +5,7 @@ from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
 from oscartnetdaemon.python_extensions.colors import colorize, hsl_to_rgbw
+from oscartnetfixtures.components.color import Color
 
 from oscartnetfixtures.python_extensions.math import map_to_int
 
@@ -58,6 +59,12 @@ class HeroWash(BaseFixture):
         if mood.on_wash == 0:
             self._mapping.dimmer = 0
 
+        self._mapping.zoom = {
+            0: 0,
+            1: 100,
+            2: 255
+        }[mood.beam_shape]
+
     def _strobe_and_white(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
         Call after color wheel
@@ -69,17 +76,9 @@ class HeroWash(BaseFixture):
 
     def _color(self, mood: Mood, group_info: ShowItemGroupInfo):
         """
-        Call before color_and_white
+        Call before _strobe_and_white
         """
-        hue = mood.hue
-        if mood.palette == 1 and group_info.place == 1:
-            hue += 0.5
-            hue = hue % 1.0
-
-        if mood.palette == 3:
-            hue += 0.5
-            hue = hue % 1.0
-
+        hue = Color.get_hue_from_palette(mood, group_info)
         r, g, b, w = hsl_to_rgbw(hue, 1.0, self._lightness)
 
         self._mapping.red_1 = colorize(self._mapping.red_1, mood.colorize_wash, r)

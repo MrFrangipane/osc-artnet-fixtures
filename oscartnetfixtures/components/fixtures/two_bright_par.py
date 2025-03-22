@@ -6,6 +6,7 @@ from oscartnetdaemon.core.mood import Mood
 from oscartnetdaemon.core.show.group_info import ShowItemGroupInfo
 
 from oscartnetdaemon.python_extensions.colors import colorize, hsl_to_rgbw
+from oscartnetfixtures.components.color import Color
 
 
 class TwoBrightPar(BaseFixture):
@@ -31,16 +32,7 @@ class TwoBrightPar(BaseFixture):
         # TODO : strobe
 
     def _color(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
-        hue = mood.hue
-        if mood.palette == 1 and group_info.place % 2:
-            hue += 0.5
-
-        if mood.palette == 2 and group_info.place not in [0, group_info.size - 1]:
-            hue += 0.33
-
-        elif mood.palette == 4:
-            hue += group_info.position * 0.5 - 0.25
-
+        hue = Color.get_hue_from_palette(mood, group_info)
         lightness = math.pow(dimmer_value * mood.master_dimmer * mood.recallable_dimmer, 2.2)
 
         saturation = 1.0
