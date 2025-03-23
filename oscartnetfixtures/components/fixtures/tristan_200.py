@@ -78,7 +78,7 @@ class Tristan200(BaseFixture):
         """
         Call after color wheel
         """
-        if mood.on_white:
+        if mood.on_white or mood.colorize_lyre < 0.5:
             self._mapping.color = 64  # open
 
         if mood.on_strobe:
