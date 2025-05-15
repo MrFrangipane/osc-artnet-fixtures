@@ -12,6 +12,10 @@ from oscartnetfixtures.components.color import Color
 class TwoBrightPar(BaseFixture):
     desaturate_threshold = 0.75
 
+    def __init__(self, address: int = None):
+        BaseFixture.__init__(self, address)
+        self._strobe: int = 0
+
     @dataclass
     class Mapping:
         red: int = 0
@@ -25,6 +29,11 @@ class TwoBrightPar(BaseFixture):
         if mood.on_par == 0:
             self._mapping = self.Mapping()
             return
+
+        self._strobe += 1
+
+        if mood.on_strobe:
+            dimmer_value *= int(self._strobe / 4) % 2
 
         self.apply_pattern_while_playing(group_info)
         self._color(mood, dimmer_value, group_info)
