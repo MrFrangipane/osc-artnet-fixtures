@@ -18,6 +18,10 @@ class EvolitePar64Zoom(BaseFixture):
         super().__init__(address)
 
     def update_mapping(self, mood: Mood, dimmer_value: float, group_info: ShowItemGroupInfo):
+        if mood.on_par == 0:
+            self._mapping = self.Mapping()
+            return
+
         self.apply_pattern_while_playing(group_info)
 
         self._mapping.dimmer = map_to_int(
