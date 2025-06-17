@@ -59,11 +59,13 @@ class HeroWash(BaseFixture):
         if mood.on_wash == 0:
             self._mapping.dimmer = 0
 
+        """
         self._mapping.zoom = {
             0: 255,
             1: 100,
             2: 0
         }[mood.beam_shape]
+        """
 
     def _strobe_and_white(self, mood: Mood, group_info: ShowItemGroupInfo):
         """

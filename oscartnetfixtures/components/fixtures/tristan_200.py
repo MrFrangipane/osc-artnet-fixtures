@@ -51,6 +51,7 @@ class Tristan200(BaseFixture):
             mood.master_dimmer * mood.recallable_dimmer * dimmer_value * (float(self._mapping.dimmer) / 255.0)
         )
 
+        """
         if mood.beam_shape == 0:
             self._mapping.gobo2 = 11
             self._mapping.focus = 255
@@ -68,6 +69,7 @@ class Tristan200(BaseFixture):
             self._mapping.focus = 0
             self._mapping.prism = 21
             self._mapping.frost = 40
+        """
 
         if mood.on_lyre == 0:
             self._mapping.dimmer = 0
