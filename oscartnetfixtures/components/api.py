@@ -6,6 +6,7 @@ from oscartnetdaemon.core.fixture.base import BaseFixture
 
 from oscartnetfixtures.components.fixtures import hero_wash
 from oscartnetfixtures.components.fixtures import octostrip_bar
+from oscartnetfixtures.components.fixtures import starway_vega_55ch
 from oscartnetfixtures.components.fixtures import tristan_200
 from oscartnetfixtures.components.fixtures import two_bright_par
 from oscartnetfixtures.components.fixtures import unique_look21
@@ -19,6 +20,7 @@ class OSCArtnetFixturesAPI:
     evolite_par64_zoom = None
     hero_wash = None
     octostrip_bar = None
+    starway_vega_55ch = None
     tristan_200 = None
     two_bright_par = None
     unique_look21 = None
@@ -32,6 +34,7 @@ class OSCArtnetFixturesAPI:
         importlib.reload(evolite_par64_zoom)
         importlib.reload(hero_wash)
         importlib.reload(octostrip_bar)
+        importlib.reload(starway_vega_55ch)
         importlib.reload(tristan_200)
         importlib.reload(two_bright_par)
         importlib.reload(unique_look21)
@@ -39,6 +42,7 @@ class OSCArtnetFixturesAPI:
         OSCArtnetFixturesAPI.evolite_par64_zoom = evolite_par64_zoom
         OSCArtnetFixturesAPI.hero_wash = hero_wash
         OSCArtnetFixturesAPI.octostrip_bar = octostrip_bar
+        OSCArtnetFixturesAPI.starway_vega_55ch = starway_vega_55ch
         OSCArtnetFixturesAPI.tristan_200 = tristan_200
         OSCArtnetFixturesAPI.two_bright_par = two_bright_par
         OSCArtnetFixturesAPI.unique_look21 = unique_look21
@@ -49,6 +53,7 @@ class OSCArtnetFixturesAPI:
             OSCArtnetFixturesAPI.evolite_par64_zoom.EvolitePar64Zoom,
             OSCArtnetFixturesAPI.hero_wash.HeroWash,
             OSCArtnetFixturesAPI.octostrip_bar.OctostripBar,
+            OSCArtnetFixturesAPI.starway_vega_55ch.StarwayVega55ch,
             OSCArtnetFixturesAPI.tristan_200.Tristan200,
             OSCArtnetFixturesAPI.two_bright_par.TwoBrightPar,
             OSCArtnetFixturesAPI.unique_look21.UniqueLook21,
